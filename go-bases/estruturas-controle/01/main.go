@@ -3,7 +3,10 @@ package main
 import "fmt"
 
 func main() {
-	word := "word"
+	var word string
+
+	fmt.Print("Digite alguma palavra: ")
+	fmt.Scan(&word)
 
 	fmt.Println(len(word))
 
