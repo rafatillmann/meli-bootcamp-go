@@ -4,7 +4,6 @@ import "fmt"
 
 func main() {
 	var word string
-
 	fmt.Print("Digite alguma palavra: ")
 	fmt.Scan(&word)
 

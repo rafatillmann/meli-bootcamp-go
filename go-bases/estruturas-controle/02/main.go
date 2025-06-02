@@ -23,7 +23,7 @@ func main() {
 	}
 
 	if age > 22 && years > 1 {
-		if salary > 100.000 {
+		if salary > 100000 {
 			fmt.Println("Você é elegível ao empréstimo sem juros")
 		} else {
 			fmt.Println("Você é elegível ao empréstimo com juros")
