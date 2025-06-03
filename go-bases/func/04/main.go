@@ -54,14 +54,17 @@ func main() {
 	minFunc, err := operation(minimum)
 	if err != nil {
 		fmt.Println(err.Error())
+        return
 	}
 	averageFunc, err := operation(average)
 	if err != nil {
 		fmt.Println(err.Error())
+        return
 	}
 	maxFunc, err := operation(maximum)
 	if err != nil {
 		fmt.Println(err.Error())
+        return
 	}
 	minValue := minFunc(2, 3, 3, 4, 10, 2, 4, 5)
 	averageValue := averageFunc(2, 3, 3, 4, 1, 2, 4, 5)

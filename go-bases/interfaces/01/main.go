@@ -32,7 +32,8 @@ func main() {
 	layout := "2006-01-02"
 	time, err := time.Parse(layout, date)
 	if err != nil {
-		fmt.Println("Error parsing:", err)
+		fmt.Println("Parsing error:", err)
+        return
 	}
 
 	fmt.Println("-----")

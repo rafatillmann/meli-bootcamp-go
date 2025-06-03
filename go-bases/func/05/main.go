@@ -48,18 +48,22 @@ func main() {
 	animalDog, err := animal(Dog)
 	if err != nil {
 		fmt.Println(err)
+        return
 	}
 	animalCat, err := animal(Cat)
 	if err != nil {
 		fmt.Println(err)
+        return
 	}
 	animalHamster, err := animal(Hamster)
 	if err != nil {
 		fmt.Println(err)
+        return
 	}
 	animalTarantula, err := animal(Tarantula)
 	if err != nil {
 		fmt.Println(err)
+        return
 	}
 
 	result := animalDog(2) + animalCat(3) + animalHamster(1) + animalTarantula(1)

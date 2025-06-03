@@ -36,9 +36,10 @@ func main() {
 
 	salary, err := salary(category, minutes)
 
-	if err == nil {
-		fmt.Printf("O salário é %.2f\n", salary)
-	} else {
+	if err != nil {
 		fmt.Println("Não foi possível calcular o salário")
+		return
 	}
+
+	fmt.Printf("O salário é %.2f\n", salary)
 }
