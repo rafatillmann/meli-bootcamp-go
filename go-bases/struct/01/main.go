@@ -11,18 +11,18 @@ type Product struct {
 }
 
 func (p Product) Save() {
-	Products = append(Products, p)
+	products = append(products, p)
 }
 
 func (p Product) GetAll() {
-	for _, product := range Products {
+	for _, product := range products {
 		fmt.Printf("ID: %d, Name: %s, Price: %.2f, Description: %s, Category: %s\n",
 			product.ID, product.Name, product.Price, product.Description, product.Category)
 	}
 }
 
 func getById(id int) Product {
-	for _, product := range Products {
+	for _, product := range products {
 		if product.ID == id {
 			return product
 		}
@@ -31,7 +31,7 @@ func getById(id int) Product {
 	return Product{}
 }
 
-var Products = []Product{
+var products = []Product{
 	{ID: 1, Name: "Pen", Price: 2.5, Description: "Blue pen", Category: "Stationery"},
 	{ID: 2, Name: "Notebook", Price: 1500, Description: "MacBook Pro", Category: "Electronics"},
 }
