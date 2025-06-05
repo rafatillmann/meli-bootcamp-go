@@ -33,6 +33,8 @@ const (
 	Night        = "night"
 )
 
+var tickets map[int]Ticket = getTickets()
+
 func getTickets() map[int]Ticket {
 	file, err := os.Open("tickets.csv")
 	if err != nil {
@@ -88,8 +90,6 @@ func GetTotalTickets(destination string) (int, error) {
 		return 0, &TicketError{"unspecified destination"}
 	}
 
-	tickets := getTickets()
-
 	total := 0
 	for _, ticket := range tickets {
 		if ticket.Country == destination {
@@ -118,8 +118,6 @@ func GetCountByPeriod(period string) (int, error) {
 		return 0, &TicketError{"unspecified period"}
 	}
 
-	tickets := getTickets()
-
 	layout := "15:04"
 
 	startTime, err := time.Parse(layout, startHour)
@@ -145,8 +143,6 @@ func AverageDestination(destination string) (float64, error) {
 	if destination == "" {
 		return 0.00, &TicketError{"unspecified destination"}
 	}
-
-	tickets := getTickets()
 
 	count := 0
 	for _, ticket := range tickets {
