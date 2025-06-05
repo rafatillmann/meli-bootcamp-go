@@ -13,8 +13,6 @@ func main() {
 		}
 	}()
 
-	tickets.PopulateTickets()
-
 	var destination string
 	fmt.Println("Enter the destination country: ")
 	fmt.Scanln(&destination)
@@ -30,7 +28,7 @@ func main() {
 	//--------------------
 
 	var period string
-	fmt.Println("Enter the time (early-morning, morning, afternoon, night): ")
+	fmt.Println("Enter the period (early-morning, morning, afternoon, night): ")
 	fmt.Scanln(&period)
 
 	count, err := tickets.GetCountByPeriod(period)

@@ -2,13 +2,20 @@ package tickets
 
 import (
 	"encoding/csv"
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"strconv"
 	"time"
 )
+
+type TicketError struct {
+	Message string
+}
+
+func (e *TicketError) Error() string {
+	return e.Message
+}
 
 type Ticket struct {
 	ID      int
@@ -19,8 +26,6 @@ type Ticket struct {
 	Price   float64
 }
 
-var tickets map[int]Ticket = make(map[int]Ticket)
-
 const (
 	EarlyMorning = "early-morning"
 	Morning      = "morning"
@@ -28,17 +33,16 @@ const (
 	Night        = "night"
 )
 
-func PopulateTickets() {
+func getTickets() map[int]Ticket {
 	file, err := os.Open("tickets.csv")
 	if err != nil {
-		panic(fmt.Sprintf("The file was not found or is damaged: %v", err))
+		panic(fmt.Sprintf("the file was not found or is damaged: %v", err))
 	}
 	defer file.Close()
 
 	reader := csv.NewReader(file)
-	if _, err := reader.Read(); err != nil {
-		panic(fmt.Sprint("Error reading CSV header: %v", err))
-	}
+
+	var tickets = make(map[int]Ticket)
 
 	for {
 		record, err := reader.Read()
@@ -46,41 +50,45 @@ func PopulateTickets() {
 			break
 		}
 		if err != nil {
-			panic(fmt.Sprintf("Error reading CSV record: %v", err))
+			panic(fmt.Sprintf("error reading CSV record: %v", err))
 		}
 
 		ID, err := strconv.Atoi(record[0])
 		if err != nil {
-			panic(fmt.Sprintf("Error converting ID to integer: %v", err))
+			panic(fmt.Sprintf("error converting ID to integer: %v", err))
 		}
 
 		layout := "15:04"
 		time, err := time.Parse(layout, record[4])
 		if err != nil {
-			panic(fmt.Sprintf("Error converting time to time.Time: %v", err))
+			panic(fmt.Sprintf("error converting time to time.Time: %v", err))
 		}
 
 		price, err := strconv.ParseFloat(record[5], 64)
 		if err != nil {
-			panic(fmt.Sprintf("Error converting price to float: %v", err))
+			panic(fmt.Sprintf("error converting price to float: %v", err))
 		}
 
 		ticket := Ticket{
 			ID:      ID,
-			Name:    record[2],
-			Email:   record[3],
-			Country: record[4],
+			Name:    record[1],
+			Email:   record[2],
+			Country: record[3],
 			Time:    time,
 			Price:   price,
 		}
 		tickets[ID] = ticket
 	}
+
+	return tickets
 }
 
 func GetTotalTickets(destination string) (int, error) {
 	if destination == "" {
-		return 0, errors.New("Unspecified destination")
+		return 0, &TicketError{"unspecified destination"}
 	}
+
+	tickets := getTickets()
 
 	total := 0
 	for _, ticket := range tickets {
@@ -92,18 +100,61 @@ func GetTotalTickets(destination string) (int, error) {
 }
 
 func GetCountByPeriod(period string) (int, error) {
+	var startHour, endHour string
 	switch period {
 	case EarlyMorning:
-		return 0, nil
+		startHour = "00:00"
+		endHour = "06:59"
 	case Morning:
-		return 0, nil
+		startHour = "07:00"
+		endHour = "12:59"
 	case Afternoon:
-		return 0, nil
+		startHour = "13:00"
+		endHour = "19:59"
 	case Night:
-		return 0, nil
+		startHour = "20:00"
+		endHour = "23:59"
 	default:
-		return 0, errors.New("Unspecified period")
+		return 0, &TicketError{"unspecified period"}
 	}
+
+	tickets := getTickets()
+
+	layout := "15:04"
+
+	startTime, err := time.Parse(layout, startHour)
+	if err != nil {
+		return 0, fmt.Errorf("error while parsing time: %v", err)
+	}
+
+	endTime, err := time.Parse(layout, endHour)
+	if err != nil {
+		return 0, fmt.Errorf("error while parsing tim: %v", err)
+	}
+
+	total := 0
+	for _, ticket := range tickets {
+		if (ticket.Time.Compare(startTime) >= 0) && (ticket.Time.Compare(endTime) <= 0) {
+			total++
+		}
+	}
+	return total, nil
 }
 
-func AverageDestination(destination string) (float64, error) {}
+func AverageDestination(destination string) (float64, error) {
+	if destination == "" {
+		return 0.00, &TicketError{"unspecified destination"}
+	}
+
+	tickets := getTickets()
+
+	count := 0
+	for _, ticket := range tickets {
+		if ticket.Country == destination {
+			count++
+		}
+	}
+
+	return (float64(count) / float64(len(tickets))) * 100, nil
+
+}
