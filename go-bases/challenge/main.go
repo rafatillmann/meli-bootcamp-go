@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/rafatillmann/meli-bootcamp-go/go-bases/challenge/internal/tickets"
 )
@@ -13,9 +16,12 @@ func main() {
 		}
 	}()
 
+	reader := bufio.NewReader(os.Stdin)
+
 	var destination string
 	fmt.Println("Enter the destination country: ")
-	fmt.Scanln(&destination)
+	destination, _ = reader.ReadString('\n')
+	destination = strings.TrimSpace(destination)
 
 	total, err := tickets.GetTotalTickets(destination)
 
@@ -29,7 +35,8 @@ func main() {
 
 	var period string
 	fmt.Println("Enter the period (early-morning, morning, afternoon, night): ")
-	fmt.Scanln(&period)
+	period, _ = reader.ReadString('\n')
+	period = strings.TrimSpace(period)
 
 	count, err := tickets.GetCountByPeriod(period)
 
@@ -42,7 +49,8 @@ func main() {
 	//--------------------
 
 	fmt.Println("Enter the destination country:")
-	fmt.Scanln(&destination)
+	destination, _ = reader.ReadString('\n')
+	destination = strings.TrimSpace(destination)
 
 	average, err := tickets.AverageDestination(destination)
 
