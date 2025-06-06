@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 )
@@ -20,17 +19,16 @@ func main() {
 			return
 		}
 
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "Can't read body", http.StatusBadRequest)
+		var data Person
+		decoder := json.NewDecoder(r.Body)
+		if err := decoder.Decode(&data); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
 			return
 		}
-		defer r.Body.Close()
 
-		var data Person
-		json.Unmarshal(body, &data)
+		response := fmt.Sprintf("Hello %s %s!", data.FirstName, data.LastName)
+		w.Write([]byte(response))
 
-		fmt.Fprintf(w, "Hello %s %s", data.FirstName, data.LastName)
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
