@@ -18,7 +18,10 @@ func ProductRouters() http.Handler {
 	r.Get("/{id}", handler.ProductById())
 	r.Get("/search", handler.SearchProducts())
 
-    r.Post("/", handler.AddProduct())
+	r.Post("/", handler.AddProduct())
+	r.Put("/{id}", handler.UpdateProduct())
+	r.Patch("/{id}", handler.PartialUpdateProduct())
+	r.Delete("/{id}", handler.DeleteProduct())
 
 	return r
 }
