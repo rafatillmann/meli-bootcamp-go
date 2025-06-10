@@ -28,7 +28,6 @@ func main() {
 
 		response := fmt.Sprintf("Hello %s %s!", data.FirstName, data.LastName)
 		w.Write([]byte(response))
-
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
