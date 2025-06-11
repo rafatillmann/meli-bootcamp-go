@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func ProductRouters() http.Handler {
+func Routers() http.Handler {
 	repository := product.NewRepository()
 	handler := handler.NewHandler(repository)
 

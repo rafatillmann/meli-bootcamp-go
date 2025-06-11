@@ -126,6 +126,7 @@ func (h *ProductHandler) UpdateProduct() http.HandlerFunc {
 	}
 }
 
+// Verificar Reflection
 func (h *ProductHandler) PartialUpdateProduct() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -164,12 +165,6 @@ func (h *ProductHandler) DeleteProduct() http.HandlerFunc {
 
 		if err != nil {
 			response.Error(w, "ID must be a valid integer", http.StatusBadRequest)
-			return
-		}
-
-		var request domain.ProductRequest
-		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-			response.Error(w, "Bad request", http.StatusBadRequest)
 			return
 		}
 

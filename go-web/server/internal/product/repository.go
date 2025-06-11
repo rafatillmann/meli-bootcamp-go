@@ -17,7 +17,8 @@ type Repository interface {
 	Delete(ID int) error
 }
 type repository struct {
-	path   string
+	path string
+	// Usar map por organizacão e desempenho
 	data   []domain.Product
 	lastID int
 }
