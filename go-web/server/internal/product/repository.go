@@ -17,44 +17,39 @@ type Repository interface {
 	Delete(ID int) error
 }
 type repository struct {
-	path string
-	// Usar map por organizacão e desempenho
-	data   []domain.Product
+	path   string
+	data   map[int]domain.Product
 	lastID int
 }
 
 func NewRepository() *repository {
 	repository := repository{
 		path: "products.json",
-		data: make([]domain.Product, 0),
 	}
 
-	data, err := repository.read()
+	err := repository.load()
 	if err != nil {
 		log.Fatal(err)
 	}
-	repository.data = data
-	repository.lastID = data[len(data)-1].ID
 	return &repository
 }
 
 func (r *repository) GetAll() []domain.Product {
-	return r.data
+	var values []domain.Product
+	for _, product := range r.data {
+		values = append(values, product)
+	}
+	return values
 }
 
 func (r *repository) GetByID(ID int) (*domain.Product, error) {
-	var result *domain.Product
-	for _, product := range r.data {
-		if product.ID == ID {
-			result = &product
-		}
-	}
+	product, found := r.data[ID]
 
-	if result == nil {
+	if !found {
 		return nil, fmt.Errorf("resource not found")
 	}
 
-	return result, nil
+	return &product, nil
 }
 
 func (r *repository) GetFilterByPrice(price float64) []domain.Product {
@@ -70,7 +65,8 @@ func (r *repository) GetFilterByPrice(price float64) []domain.Product {
 func (r *repository) Create(product *domain.Product) error {
 	r.lastID++
 	product.ID = r.lastID
-	r.data = append(r.data, *product)
+
+	r.data[product.ID] = *product
 
 	if err := r.write(); err != nil {
 		return fmt.Errorf("error while writing data: %w", err)
@@ -79,49 +75,54 @@ func (r *repository) Create(product *domain.Product) error {
 	return nil
 }
 
-func (r *repository) Update(product *domain.Product) error {
-	for i, p := range r.data {
-		if p.ID == product.ID {
-			r.data[i] = *product
-
-			if err := r.write(); err != nil {
-				return fmt.Errorf("error while writing data: %w", err)
-			}
-			return nil
-		}
+func (r *repository) Update(update *domain.Product) error {
+	if _, found := r.data[update.ID]; !found {
+		return fmt.Errorf("resource not found")
 	}
 
-	return fmt.Errorf("resource not found")
+	r.data[update.ID] = *update
+
+	if err := r.write(); err != nil {
+		return fmt.Errorf("error while writing data: %w", err)
+	}
+	return nil
 }
 
 func (r *repository) Delete(ID int) error {
-	for i, p := range r.data {
-		if p.ID == ID {
-			r.data = append(r.data[:i], r.data[i+1:]...)
-
-			if err := r.write(); err != nil {
-				return fmt.Errorf("error while writing data: %w", err)
-			}
-			return nil
-		}
+	if _, found := r.data[ID]; !found {
+		return fmt.Errorf("resource not found")
 	}
 
-	return fmt.Errorf("resource not found")
+	delete(r.data, ID)
+
+	if err := r.write(); err != nil {
+		return fmt.Errorf("error while writing data: %w", err)
+	}
+	return nil
 }
 
-func (r *repository) read() ([]domain.Product, error) {
+func (r *repository) load() error {
 	file, err := os.Open(r.path)
 	if err != nil {
-		return nil, fmt.Errorf("the file was not found: %w", err)
+		return fmt.Errorf("the file was not found: %w", err)
 	}
 	defer file.Close()
 
-	var data []domain.Product
+	var values []domain.Product
 	decoder := json.NewDecoder(file)
-	if err := decoder.Decode(&data); err != nil {
-		return nil, fmt.Errorf("error decoding JSON: %w", err)
+	if err := decoder.Decode(&values); err != nil {
+		return fmt.Errorf("error decoding JSON: %w", err)
 	}
-	return data, nil
+
+	data := make(map[int]domain.Product)
+	for _, product := range values {
+		data[product.ID] = product
+	}
+
+	r.data = data
+	r.lastID = values[len(values)-1].ID
+
+	return nil
 }
 
 func (r *repository) write() error {
@@ -131,8 +132,13 @@ func (r *repository) write() error {
 	}
 	defer file.Close()
 
+	var values []domain.Product
+	for _, product := range r.data {
+		values = append(values, product)
+	}
+
 	encoder := json.NewEncoder(file)
-	if err := encoder.Encode(r.data); err != nil {
+	if err := encoder.Encode(values); err != nil {
 		return fmt.Errorf("error encoding JSON: %w", err)
 	}
 
