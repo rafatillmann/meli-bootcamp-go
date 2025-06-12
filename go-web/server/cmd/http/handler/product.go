@@ -80,7 +80,7 @@ func (h *ProductHandler) AddProduct() http.HandlerFunc {
 			return
 		}
 
-		if !domain.ValidateExpiration(request.Expiration) {
+		if !api.ValidateExpiration(request.Expiration) {
 			response.Error(w, "Expiration has a invalid format", http.StatusBadRequest)
 			return
 		}
@@ -125,7 +125,7 @@ func (h *ProductHandler) UpdateProduct() http.HandlerFunc {
 			return
 		}
 
-		if !domain.ValidateExpiration(request.Expiration) {
+		if !api.ValidateExpiration(request.Expiration) {
 			response.Error(w, "Expiration has a invalid format", http.StatusBadRequest)
 			return
 		}
@@ -172,7 +172,7 @@ func (h *ProductHandler) PartialUpdateProduct() http.HandlerFunc {
 			return
 		}
 
-		if product.Expiration != "" && !domain.ValidateExpiration(product.Expiration) {
+		if !api.ValidateExpiration(product.Expiration) {
 			response.Error(w, "Expiration has a invalid format", http.StatusBadRequest)
 			return
 		}
