@@ -16,6 +16,8 @@ func main() {
 		}
 	}()
 
+	var repository tickets.TicketRepository = tickets.NewTicketRepository()
+
 	reader := bufio.NewReader(os.Stdin)
 
 	var destination string
@@ -23,7 +25,7 @@ func main() {
 	destination, _ = reader.ReadString('\n')
 	destination = strings.TrimSpace(destination)
 
-	total, err := tickets.GetTotalTickets(destination)
+	total, err := repository.GetTotalTickets(destination)
 
 	if err != nil {
 		panic(err)
@@ -38,7 +40,7 @@ func main() {
 	period, _ = reader.ReadString('\n')
 	period = strings.TrimSpace(period)
 
-	count, err := tickets.GetCountByPeriod(period)
+	count, err := repository.GetCountByPeriod(period)
 
 	if err != nil {
 		panic(err)
@@ -52,7 +54,7 @@ func main() {
 	destination, _ = reader.ReadString('\n')
 	destination = strings.TrimSpace(destination)
 
-	average, err := tickets.AverageDestination(destination)
+	average, err := repository.AverageDestination(destination)
 
 	if err != nil {
 		panic(err)

@@ -2,8 +2,8 @@ package tickets_test
 
 import (
 	"io"
-	"math"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/rafatillmann/meli-bootcamp-go/go-bases/challenge/internal/tickets"
@@ -11,11 +11,13 @@ import (
 )
 
 func mockCSV(t *testing.T) func(name string) error {
-	content := `1,John Doe,john@example.com,Brazil,20:00,1000
-                2,Jane Doe,jane@example.com,China,17:00,1000
-                3,Jim Beam,jim@example.com,Brazil,03:00,2000
-                4,Jack Daniels,jack@example.com,China,10:00,2500
-                5,Alice Smith,alice@example.com,Brazil,13:00,2000`
+	content := strings.Join([]string{
+		"1,John Doe,john@example.com,Brazil,20:00,1000",
+		"2,Jane Doe,jane@example.com,China,17:00,1000",
+		"3,Jim Beam,jim@example.com,Brazil,03:00,2000",
+		"4,Jack Daniels,jack@example.com,China,10:00,2500",
+		"5,Alice Smith,alice@example.com,Brazil,13:00,2000",
+	}, "\n")
 
 	tmpFile, err := os.Create("tickets.csv")
 	require.NoError(t, err)
@@ -28,6 +30,9 @@ func mockCSV(t *testing.T) func(name string) error {
 
 func TestGetTotalTickets(t *testing.T) {
 	defer mockCSV(t)("tickets.csv")
+
+	repository := tickets.NewTicketRepository()
+
 	testCases := []struct {
 		destination string
 		expected    int
@@ -38,7 +43,7 @@ func TestGetTotalTickets(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.destination, func(t *testing.T) {
-			result, _ := tickets.GetTotalTickets(tc.destination)
+			result, _ := repository.GetTotalTickets(tc.destination)
 			require.Equal(t, tc.expected, result)
 		})
 	}
@@ -46,6 +51,9 @@ func TestGetTotalTickets(t *testing.T) {
 
 func TestGetCountByPeriod(t *testing.T) {
 	defer mockCSV(t)("tickets.csv")
+
+	repository := tickets.NewTicketRepository()
+
 	testCases := []struct {
 		period   string
 		expected int
@@ -58,7 +66,7 @@ func TestGetCountByPeriod(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.period, func(t *testing.T) {
-			result, _ := tickets.GetCountByPeriod(tc.period)
+			result, _ := repository.GetCountByPeriod(tc.period)
 			require.Equal(t, tc.expected, result)
 		})
 	}
@@ -66,6 +74,9 @@ func TestGetCountByPeriod(t *testing.T) {
 
 func TestAverageDestination(t *testing.T) {
 	defer mockCSV(t)("tickets.csv")
+
+	repository := tickets.NewTicketRepository()
+
 	testCases := []struct {
 		destination string
 		expected    float64
@@ -76,29 +87,37 @@ func TestAverageDestination(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.destination, func(t *testing.T) {
-			result, _ := tickets.AverageDestination(tc.destination)
-			percentage := math.Round(result) // Round to facilitate comparison
-			require.Equal(t, tc.expected, percentage)
+			result, _ := repository.AverageDestination(tc.destination)
+			require.Equal(t, tc.expected, result)
 		})
 	}
 }
 
 func TestGetTotalTicketsError(t *testing.T) {
-	_, err := tickets.GetTotalTickets("")
+	defer mockCSV(t)("tickets.csv")
+	repository := tickets.NewTicketRepository()
+
+	_, err := repository.GetTotalTickets("")
 
 	require.Error(t, err)
 	require.EqualError(t, err, "unspecified destination")
 }
 
 func TestGetCountByPeriodError(t *testing.T) {
-	_, err := tickets.GetCountByPeriod("")
+	defer mockCSV(t)("tickets.csv")
+	repository := tickets.NewTicketRepository()
+
+	_, err := repository.GetCountByPeriod("")
 
 	require.Error(t, err)
 	require.EqualError(t, err, "unspecified period")
 }
 
 func TestAverageDestinationError(t *testing.T) {
-	_, err := tickets.AverageDestination("")
+	defer mockCSV(t)("tickets.csv")
+	repository := tickets.NewTicketRepository()
+
+	_, err := repository.AverageDestination("")
 
 	require.Error(t, err)
 	require.EqualError(t, err, "unspecified destination")

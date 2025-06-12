@@ -33,10 +33,29 @@ const (
 	Night        = "night"
 )
 
-var tickets map[int]Ticket = getTickets()
+type TicketRepository interface {
+	GetTotalTickets(destination string) (int, error)
+	GetCountByPeriod(period string) (int, error)
+	AverageDestination(destination string) (float64, error)
+}
 
-func getTickets() map[int]Ticket {
-	file, err := os.Open("tickets.csv")
+type repository struct {
+	path    string
+	tickets map[int]Ticket
+}
+
+func NewTicketRepository() *repository {
+	repository := repository{
+		path: "tickets.csv",
+	}
+
+	repository.tickets = repository.getTickets()
+
+	return &repository
+}
+
+func (r *repository) getTickets() map[int]Ticket {
+	file, err := os.Open(r.path)
 	if err != nil {
 		panic(fmt.Sprintf("the file was not found or is damaged: %v", err))
 	}
@@ -85,13 +104,13 @@ func getTickets() map[int]Ticket {
 	return tickets
 }
 
-func GetTotalTickets(destination string) (int, error) {
+func (r *repository) GetTotalTickets(destination string) (int, error) {
 	if destination == "" {
 		return 0, &TicketError{"unspecified destination"}
 	}
 
 	total := 0
-	for _, ticket := range tickets {
+	for _, ticket := range r.tickets {
 		if ticket.Country == destination {
 			total++
 		}
@@ -99,7 +118,7 @@ func GetTotalTickets(destination string) (int, error) {
 	return total, nil
 }
 
-func GetCountByPeriod(period string) (int, error) {
+func (r *repository) GetCountByPeriod(period string) (int, error) {
 	var startHour, endHour string
 	switch period {
 	case EarlyMorning:
@@ -131,7 +150,7 @@ func GetCountByPeriod(period string) (int, error) {
 	}
 
 	total := 0
-	for _, ticket := range tickets {
+	for _, ticket := range r.tickets {
 		if (ticket.Time.Compare(startTime) >= 0) && (ticket.Time.Compare(endTime) <= 0) {
 			total++
 		}
@@ -139,18 +158,18 @@ func GetCountByPeriod(period string) (int, error) {
 	return total, nil
 }
 
-func AverageDestination(destination string) (float64, error) {
+func (r *repository) AverageDestination(destination string) (float64, error) {
 	if destination == "" {
 		return 0.00, &TicketError{"unspecified destination"}
 	}
 
 	count := 0
-	for _, ticket := range tickets {
+	for _, ticket := range r.tickets {
 		if ticket.Country == destination {
 			count++
 		}
 	}
 
-	return (float64(count) / float64(len(tickets))) * 100, nil
+	return (float64(count) / float64(len(r.tickets))) * 100, nil
 
 }
