@@ -3,20 +3,23 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"server/cmd/http/api"
 	"server/internal/domain"
 	"server/internal/product"
 	"server/pkg/response"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 )
 
 type ProductHandler struct {
 	repository product.Repository
+	validator  *validator.Validate
 }
 
-func NewHandler(repository product.Repository) *ProductHandler {
-	return &ProductHandler{repository}
+func NewHandler(repository product.Repository, validator *validator.Validate) *ProductHandler {
+	return &ProductHandler{repository, validator}
 }
 
 func (h *ProductHandler) Products() http.HandlerFunc {
@@ -39,6 +42,7 @@ func (h *ProductHandler) ProductById() http.HandlerFunc {
 		product, err := h.repository.GetByID(ID)
 		if err != nil {
 			response.Error(w, "Product not found", http.StatusNotFound)
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -65,9 +69,19 @@ func (h *ProductHandler) SearchProducts() http.HandlerFunc {
 func (h *ProductHandler) AddProduct() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		var request domain.ProductRequest
+		var request api.ProductRequest
 		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 			response.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
+
+		if err := h.validator.Struct(request); err != nil {
+			response.Error(w, "Some required fields are missing", http.StatusBadRequest)
+			return
+		}
+
+		if !domain.ValidateExpiration(request.Expiration) {
+			response.Error(w, "Expiration has a invalid format", http.StatusBadRequest)
 			return
 		}
 
@@ -100,9 +114,19 @@ func (h *ProductHandler) UpdateProduct() http.HandlerFunc {
 			return
 		}
 
-		var request domain.ProductRequest
+		var request api.ProductRequest
 		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 			response.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
+
+		if err := h.validator.Struct(request); err != nil {
+			response.Error(w, "Some required fields are missing", http.StatusBadRequest)
+			return
+		}
+
+		if !domain.ValidateExpiration(request.Expiration) {
+			response.Error(w, "Expiration has a invalid format", http.StatusBadRequest)
 			return
 		}
 
@@ -140,10 +164,16 @@ func (h *ProductHandler) PartialUpdateProduct() http.HandlerFunc {
 		product, err := h.repository.GetByID(ID)
 		if err != nil {
 			response.Error(w, "Product not found", http.StatusNotFound)
+			return
 		}
 
 		if err := json.NewDecoder(r.Body).Decode(product); err != nil {
 			response.Error(w, "Bad request", http.StatusBadRequest)
+			return
+		}
+
+		if product.Expiration != "" && !domain.ValidateExpiration(product.Expiration) {
+			response.Error(w, "Expiration has a invalid format", http.StatusBadRequest)
 			return
 		}
 
