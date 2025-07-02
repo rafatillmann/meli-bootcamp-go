@@ -63,7 +63,7 @@ func (a *ApplicationDefault) SetUp() (err error) {
 		log.Fatal(pingErr)
 	}
 
-	rp := repository.NewRepositoryDb(db)
+	rp := repository.NewRepositoryProductSql(db)
 
 	hd := handler.NewHandlerProduct(rp)
 

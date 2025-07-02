@@ -7,16 +7,16 @@ import (
 	"errors"
 )
 
-func NewRepositoryDb(db *sql.DB) (r *RepositoryProductDb) {
-	r = &RepositoryProductDb{db}
+func NewRepositoryProductSql(db *sql.DB) (r *RepositoryProductSql) {
+	r = &RepositoryProductSql{db}
 	return
 }
 
-type RepositoryProductDb struct {
+type RepositoryProductSql struct {
 	db *sql.DB
 }
 
-func (r *RepositoryProductDb) Delete(id int) (err error) {
+func (r *RepositoryProductSql) Delete(id int) (err error) {
 	if _, err := r.db.Exec("delete from users u where u.id = ?", id); err != nil {
 		return apperrors.ErrRepositoryDeleteData
 	}
@@ -24,17 +24,7 @@ func (r *RepositoryProductDb) Delete(id int) (err error) {
 	return nil
 }
 
-type ProductJSON struct {
-	Id          int     `json:"id"`
-	Name        string  `json:"name"`
-	Quantity    int     `json:"quantity"`
-	CodeValue   string  `json:"code_value"`
-	IsPublished bool    `json:"is_published"`
-	Expiration  string  `json:"expiration"`
-	Price       float64 `json:"price"`
-}
-
-func (r *RepositoryProductDb) FindById(id int) (p domain.Product, err error) {
+func (r *RepositoryProductSql) FindById(id int) (p domain.Product, err error) {
 	row := r.db.QueryRow("select p.id, p.name, p.quantity, p.code_value, p.is_published, p.expiration, p.price from products p where p.id = ?", id)
 
 	if err := row.Err(); err != nil {
@@ -51,7 +41,7 @@ func (r *RepositoryProductDb) FindById(id int) (p domain.Product, err error) {
 	return p, nil
 }
 
-func (r *RepositoryProductDb) Save(p *domain.Product) (err error) {
+func (r *RepositoryProductSql) Save(p *domain.Product) (err error) {
 	result, err := r.db.Exec("insert into products (name, quantity, code_value, is_published, expiration, price) values (?, ?, ?, ?, ?, ?)",
 		p.Name, p.Quantity, p.CodeValue, p.IsPublished, p.Expiration, p.Price)
 
@@ -68,7 +58,7 @@ func (r *RepositoryProductDb) Save(p *domain.Product) (err error) {
 	return nil
 }
 
-func (r *RepositoryProductDb) Update(p *domain.Product) (err error) {
+func (r *RepositoryProductSql) Update(p *domain.Product) (err error) {
 	if _, err := r.db.Exec("update products set name = ?, quantity = ?, code_value = ?, is_published = ?, expiration = ?, price = ? where id = ?",
 		p.Name, p.Quantity, p.CodeValue, p.IsPublished, p.Expiration, p.Price, p.Id); err != nil {
 		return apperrors.ErrRepositoryUpdateData
@@ -77,6 +67,6 @@ func (r *RepositoryProductDb) Update(p *domain.Product) (err error) {
 	return nil
 }
 
-func (r *RepositoryProductDb) UpdateOrSave(p *domain.Product) (err error) {
+func (r *RepositoryProductSql) UpdateOrSave(p *domain.Product) (err error) {
 	panic("unimplemented")
 }
