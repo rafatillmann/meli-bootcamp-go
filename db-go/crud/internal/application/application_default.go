@@ -46,8 +46,6 @@ func (a *ApplicationDefault) TearDown() (err error) {
 
 // SetUp sets up the application.
 func (a *ApplicationDefault) SetUp() (err error) {
-	// dependencies
-	// - store
 	config := &mysql.Config{
 		User:   "root",
 		Passwd: "1234",
@@ -64,33 +62,24 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
-	// - repository
+
 	rp := repository.NewRepositoryDb(db)
-	// - handler
+
 	hd := handler.NewHandlerProduct(rp)
 
-	// router
-	// - middlewares
 	a.rt.Use(middleware.Logger)
 	a.rt.Use(middleware.Recoverer)
-	// - endpoints
 	a.rt.Route("/products", func(r chi.Router) {
-		// GET /products/{id}
 		r.Get("/{id}", hd.GetById())
-		// POST /products
 		r.Post("/", hd.Create())
-		// PUT /products/{id}
 		r.Put("/{id}", hd.UpdateOrCreate())
-		// PATCH /products/{id}
 		r.Patch("/{id}", hd.Update())
-		// DELETE /products/{id}
 		r.Delete("/{id}", hd.Delete())
 	})
 
 	return
 }
 
-// Run runs the application.
 func (a *ApplicationDefault) Run() (err error) {
 	err = http.ListenAndServe(a.addr, a.rt)
 	return

@@ -1,6 +1,9 @@
 package repository
 
-import "app/internal/domain"
+import (
+	"app/internal/apperrors"
+	"app/internal/domain"
+)
 
 // NewRepositoryProductStore creates a new repository for products.
 func NewRepositoryProductStore(st domain.StoreProduct) (r *RepositoryProductStore) {
@@ -27,7 +30,7 @@ func (r *RepositoryProductStore) FindById(id int) (p domain.Product, err error) 
 	// find product
 	p, ok := ps[id]
 	if !ok {
-		err = domain.ErrRepositoryProductNotFound
+		err = apperrors.ErrRepositoryProductNotFound
 		return
 	}
 
@@ -126,7 +129,7 @@ func (r *RepositoryProductStore) Update(p *domain.Product) (err error) {
 	// update product
 	_, ok := ps[p.Id]
 	if !ok {
-		err = domain.ErrRepositoryProductNotFound
+		err = apperrors.ErrRepositoryProductNotFound
 		return
 	}
 
@@ -153,7 +156,7 @@ func (r *RepositoryProductStore) Delete(id int) (err error) {
 	// delete product
 	_, ok := ps[id]
 	if !ok {
-		err = domain.ErrRepositoryProductNotFound
+		err = apperrors.ErrRepositoryProductNotFound
 		return
 	}
 

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"app/internal/apperrors"
 	"app/internal/domain"
 	"app/platform/web/request"
 	"app/platform/web/response"
@@ -53,7 +54,7 @@ func (h *HandlerProduct) GetById() http.HandlerFunc {
 		p, err := h.rp.FindById(id)
 		if err != nil {
 			switch {
-			case errors.Is(err, domain.ErrRepositoryProductNotFound):
+			case errors.Is(err, apperrors.ErrRepositoryProductNotFound):
 				response.JSON(w, http.StatusNotFound, "product not found")
 			default:
 				response.JSON(w, http.StatusInternalServerError, "internal server error")
@@ -220,7 +221,7 @@ func (h *HandlerProduct) Update() http.HandlerFunc {
 		p, err := h.rp.FindById(id)
 		if err != nil {
 			switch {
-			case errors.Is(err, domain.ErrRepositoryProductNotFound):
+			case errors.Is(err, apperrors.ErrRepositoryProductNotFound):
 				response.JSON(w, http.StatusNotFound, "product not found")
 			default:
 				response.JSON(w, http.StatusInternalServerError, "internal server error")
@@ -294,7 +295,7 @@ func (h *HandlerProduct) Delete() http.HandlerFunc {
 		err = h.rp.Delete(id)
 		if err != nil {
 			switch {
-			case errors.Is(err, domain.ErrRepositoryProductNotFound):
+			case errors.Is(err, apperrors.ErrRepositoryProductNotFound):
 				response.JSON(w, http.StatusNotFound, "product not found")
 			default:
 				response.JSON(w, http.StatusInternalServerError, "internal server error")

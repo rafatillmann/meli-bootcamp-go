@@ -1,12 +1,5 @@
 package domain
 
-import "errors"
-
-var (
-	// ErrRepositoryProductNotFound is returned when a product is not found.
-	ErrRepositoryProductNotFound = errors.New("repository: product not found")
-)
-
 // RepositoryProduct is an interface that contains the methods for a product repository
 type RepositoryProduct interface {
 	// FindById returns a product by its id
