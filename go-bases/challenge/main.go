@@ -60,5 +60,5 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("Porcentage of people who bought tickets to %s: %.2f%%\n", destination, average)
+	fmt.Printf("Percentage of people who bought tickets to %s: %.2f%%\n", destination, average)
 }
