@@ -2,31 +2,29 @@ package ticket
 
 import (
 	"chanllenge/internal/domain"
-	"context"
+	"strings"
 )
 
-// NewRepositoryTicketMap creates a new repository for tickets in a map
-func NewRepositoryTicketMap(db map[int]domain.TicketAttributes) *RepositoryTicketMap {
-	return &RepositoryTicketMap{
-		db: db,
-		//lastId: lastId,
+type RepositoryDefault struct {
+	db     map[int]domain.TicketAttributes
+	lastId int
+}
+
+func NewRepository(db map[int]domain.TicketAttributes) *RepositoryDefault {
+	defaultLastId := 0
+	for key := range db {
+		if key > defaultLastId {
+			defaultLastId = key
+		}
+	}
+
+	return &RepositoryDefault{
+		db:     db,
+		lastId: defaultLastId,
 	}
 }
 
-// RepositoryTicketMap implements the repository interface for tickets in a map
-type RepositoryTicketMap struct {
-	// db represents the database in a map
-	// - key: id of the ticket
-	// - value: ticket
-	db map[int]domain.TicketAttributes
-
-	// lastId represents the last id of the ticket
-	//lastId int
-}
-
-// GetAll returns all the tickets
-func (r *RepositoryTicketMap) Get(ctx context.Context) (t map[int]domain.TicketAttributes, err error) {
-	// create a copy of the map
+func (r *RepositoryDefault) Get() (t map[int]domain.TicketAttributes, err error) {
 	t = make(map[int]domain.TicketAttributes, len(r.db))
 	for k, v := range r.db {
 		t[k] = v
@@ -35,12 +33,10 @@ func (r *RepositoryTicketMap) Get(ctx context.Context) (t map[int]domain.TicketA
 	return
 }
 
-// GetTicketsByDestinationCountry returns the tickets filtered by destination country
-func (r *RepositoryTicketMap) GetTicketsByDestinationCountry(ctx context.Context, country string) (t map[int]domain.TicketAttributes, err error) {
-	// create a copy of the map
+func (r *RepositoryDefault) GetTicketsByDestinationCountry(country string) (t map[int]domain.TicketAttributes, err error) {
 	t = make(map[int]domain.TicketAttributes)
 	for k, v := range r.db {
-		if v.Country == country {
+		if strings.EqualFold(v.Country, country) {
 			t[k] = v
 		}
 	}

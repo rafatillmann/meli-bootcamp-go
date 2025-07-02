@@ -9,20 +9,20 @@ import (
 	"strconv"
 )
 
-// NewLoaderTicketCSV creates a new ticket loader from a CSV file
-func NewLoaderTicketCSV(filePath string) *LoaderTicketCSV {
-	return &LoaderTicketCSV{
+// NewLoaderCsv creates a new ticket loader from a CSV file
+func NewLoaderCsv(filePath string) *LoaderCsv {
+	return &LoaderCsv{
 		filePath: filePath,
 	}
 }
 
-// LoaderTicketCSV represents a ticket loader from a CSV file
-type LoaderTicketCSV struct {
+// LoaderCsv represents a ticket loader from a CSV file
+type LoaderCsv struct {
 	filePath string
 }
 
 // Load loads the tickets from the CSV file
-func (t *LoaderTicketCSV) Load() (db map[int]domain.TicketAttributes, err error) {
+func (t *LoaderCsv) Load() (db map[int]domain.TicketAttributes, err error) {
 	// open the file
 	f, err := os.Open(t.filePath)
 	if err != nil {
