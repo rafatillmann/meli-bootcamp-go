@@ -1,8 +1,7 @@
 package application
 
 import (
-	"app/internal/handler"
-	"app/internal/repository"
+	"app/cmd/router"
 	"database/sql"
 	"log"
 	"net/http"
@@ -32,12 +31,10 @@ func NewApplicationDefault(addr string) (a *ApplicationDefault) {
 	return
 }
 
-// TearDown tears down the application.
 func (a *ApplicationDefault) TearDown() (err error) {
 	return
 }
 
-// SetUp sets up the application.
 func (a *ApplicationDefault) SetUp() (err error) {
 	config := &mysql.Config{
 		User:   "root",
@@ -57,16 +54,15 @@ func (a *ApplicationDefault) SetUp() (err error) {
 		log.Fatal(pingErr)
 	}
 
-	rp := repository.NewRepositoryProductSql(db)
-	hd := handler.NewHandlerProduct(rp)
-
 	a.rt.Use(middleware.Logger)
 	a.rt.Use(middleware.Recoverer)
+
 	a.rt.Route("/products", func(r chi.Router) {
-		r.Get("/{id}", hd.GetById())
-		r.Post("/", hd.Create())
-		r.Patch("/{id}", hd.Update())
-		r.Delete("/{id}", hd.Delete())
+		r.Mount("/", router.ProductRouter(db))
+	})
+
+	a.rt.Route("/warehouses", func(r chi.Router) {
+		r.Mount("/", router.WarehouseRouter(db))
 	})
 
 	return
