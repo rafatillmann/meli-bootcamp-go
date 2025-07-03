@@ -2,44 +2,24 @@ package mock
 
 import (
 	"chanllenge/internal/domain"
+
+	"github.com/stretchr/testify/mock"
 )
+
+type RepositoryTicketMock struct {
+	mock.Mock
+}
 
 func NewRepositoryTicketMock() *RepositoryTicketMock {
 	return &RepositoryTicketMock{}
 }
 
-// RepositoryTicketMock implements the repository interface for tickets
-type RepositoryTicketMock struct {
-	// FuncGet represents the mock for the Get function
-	FuncGet func() (t map[int]domain.TicketAttributes, err error)
-	// FuncGetTicketsByDestinationCountry
-	FuncGetTicketsByDestinationCountry func(country string) (t map[int]domain.TicketAttributes, err error)
-
-	// Spy verifies if the methods were called
-	Spy struct {
-		// Get represents the spy for the Get function
-		Get int
-		// GetTicketsByDestinationCountry represents the spy for the GetTicketsByDestinationCountry function
-		GetTicketsByDestinationCountry int
-	}
-}
-
-// GetAll returns all the tickets
 func (r *RepositoryTicketMock) Get() (t map[int]domain.TicketAttributes, err error) {
-	// spy
-	r.Spy.Get++
-
-	// mock
-	t, err = r.FuncGet()
-	return
+	args := r.Mock.Called()
+	return args.Get(0).(map[int]domain.TicketAttributes), args.Error(1)
 }
 
-// GetTicketsByDestinationCountry returns the tickets filtered by destination country
 func (r *RepositoryTicketMock) GetTicketsByDestinationCountry(country string) (t map[int]domain.TicketAttributes, err error) {
-	// spy
-	r.Spy.GetTicketsByDestinationCountry++
-
-	// mock
-	t, err = r.FuncGetTicketsByDestinationCountry(country)
-	return
+	args := r.Mock.Called()
+	return args.Get(0).(map[int]domain.TicketAttributes), args.Error(1)
 }

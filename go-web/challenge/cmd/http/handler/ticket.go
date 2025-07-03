@@ -26,7 +26,7 @@ func (h *TicketHandler) GetAmount() http.HandlerFunc {
 	}
 }
 
-func (h *TicketHandler) GetAmountByCountry() http.HandlerFunc {
+func (h *TicketHandler) GetAmountByDestinationCountry() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		country := chi.URLParam(r, "country")
 		total, err := h.sv.GetTicketsAmountByDestinationCountry(country)
@@ -37,7 +37,7 @@ func (h *TicketHandler) GetAmountByCountry() http.HandlerFunc {
 	}
 }
 
-func (h *TicketHandler) GetPercentageByCountry() http.HandlerFunc {
+func (h *TicketHandler) GetPercentageByDestinationCountry() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		country := chi.URLParam(r, "country")
 		percentage, err := h.sv.GetPercentageTicketsByDestinationCountry(country)

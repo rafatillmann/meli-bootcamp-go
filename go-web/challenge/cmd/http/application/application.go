@@ -48,14 +48,14 @@ func (a *ApplicationDefault) SetUp() (err error) {
 		log.Fatal(err)
 	}
 
-	rp := ticket.NewRepository(db)
-	sv := ticket.NewService(rp)
-	handler := handler.NewTicketHandler(sv)
+	repository := ticket.NewRepository(db)
+	service := ticket.NewService(repository)
+	handler := handler.NewTicketHandler(service)
 
 	a.rt.Route("/tickets", func(r chi.Router) {
 		r.Get("/amount", handler.GetAmount())
-		r.Get("/amount/{country}", handler.GetAmountByCountry())
-		r.Get("/percentage/{country}", handler.GetPercentageByCountry())
+		r.Get("/amount/{country}", handler.GetAmountByDestinationCountry())
+		r.Get("/percentage/{country}", handler.GetPercentageByDestinationCountry())
 	})
 
 	return
