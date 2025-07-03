@@ -144,67 +144,6 @@ func (h *HandlerProduct) Create() http.HandlerFunc {
 	}
 }
 
-// UpdateOrCreate updates or creates a product.
-func (h *HandlerProduct) UpdateOrCreate() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// request
-		// - path parameter: id
-		id, err := strconv.Atoi(chi.URLParam(r, "id"))
-		if err != nil {
-			response.JSON(w, http.StatusBadRequest, "invalid id")
-			return
-		}
-		// - body
-		var body RequestBodyProductCreate
-		err = request.JSON(r, &body)
-		if err != nil {
-			response.JSON(w, http.StatusBadRequest, "invalid body")
-			return
-		}
-		// - expiration
-		exp, err := time.Parse(time.DateOnly, body.Expiration)
-		if err != nil {
-			response.JSON(w, http.StatusBadRequest, "invalid expiration")
-			return
-		}
-
-		// process
-		// - update or save product
-		p := domain.Product{
-			Id: id,
-			ProductAttributes: domain.ProductAttributes{
-				Name:        body.Name,
-				Quantity:    body.Quantity,
-				CodeValue:   body.CodeValue,
-				IsPublished: body.IsPublished,
-				Expiration:  exp,
-				Price:       body.Price,
-			},
-		}
-		err = h.rp.UpdateOrSave(&p)
-		if err != nil {
-			response.JSON(w, http.StatusInternalServerError, "internal server error")
-			return
-		}
-
-		// response
-		// - serialize product to JSON
-		data := ProductJSON{
-			Id:          p.Id,
-			Name:        p.Name,
-			Quantity:    p.Quantity,
-			CodeValue:   p.CodeValue,
-			IsPublished: p.IsPublished,
-			Expiration:  p.Expiration.Format(time.DateOnly),
-			Price:       p.Price,
-		}
-		response.JSON(w, http.StatusOK, map[string]any{
-			"message": "success",
-			"data":    data,
-		})
-	}
-}
-
 // Update updates a product.
 func (h *HandlerProduct) Update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

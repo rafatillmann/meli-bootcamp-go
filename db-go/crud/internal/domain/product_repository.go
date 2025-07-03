@@ -6,8 +6,6 @@ type RepositoryProduct interface {
 	FindById(id int) (p Product, err error)
 	// Save saves a product
 	Save(p *Product) (err error)
-	// UpdateOrSave updates or saves a product
-	UpdateOrSave(p *Product) (err error)
 	// Update updates a product
 	Update(p *Product) (err error)
 	// Delete deletes a product

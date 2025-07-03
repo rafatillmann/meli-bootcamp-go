@@ -6,12 +6,7 @@ import (
 )
 
 func main() {
-	// env
-	// ...
-
-	// app
-	// - config
-	app := application.NewApplicationDefault("", "./docs/db/json/products.json")
+	app := application.NewApplicationDefault("")
 	// - tear down
 	defer app.TearDown()
 	// - set up

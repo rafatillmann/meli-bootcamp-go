@@ -12,8 +12,12 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-// NewApplicationDefault creates a new default application.
-func NewApplicationDefault(addr, filePathStore string) (a *ApplicationDefault) {
+type ApplicationDefault struct {
+	rt   *chi.Mux
+	addr string
+}
+
+func NewApplicationDefault(addr string) (a *ApplicationDefault) {
 	// default config
 	defaultRouter := chi.NewRouter()
 	defaultAddr := ":8080"
@@ -22,21 +26,10 @@ func NewApplicationDefault(addr, filePathStore string) (a *ApplicationDefault) {
 	}
 
 	a = &ApplicationDefault{
-		rt:            defaultRouter,
-		addr:          defaultAddr,
-		filePathStore: filePathStore,
+		rt:   defaultRouter,
+		addr: defaultAddr,
 	}
 	return
-}
-
-// ApplicationDefault is the default application.
-type ApplicationDefault struct {
-	// rt is the router.
-	rt *chi.Mux
-	// addr is the address to listen.
-	addr string
-	// filePathStore is the file path to store.
-	filePathStore string
 }
 
 // TearDown tears down the application.
@@ -57,6 +50,7 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.Close()
 
 	pingErr := db.Ping()
 	if pingErr != nil {
@@ -64,7 +58,6 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	}
 
 	rp := repository.NewRepositoryProductSql(db)
-
 	hd := handler.NewHandlerProduct(rp)
 
 	a.rt.Use(middleware.Logger)
@@ -72,7 +65,6 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	a.rt.Route("/products", func(r chi.Router) {
 		r.Get("/{id}", hd.GetById())
 		r.Post("/", hd.Create())
-		r.Put("/{id}", hd.UpdateOrCreate())
 		r.Patch("/{id}", hd.Update())
 		r.Delete("/{id}", hd.Delete())
 	})

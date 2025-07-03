@@ -66,7 +66,3 @@ func (r *RepositoryProductSql) Update(p *domain.Product) (err error) {
 
 	return nil
 }
-
-func (r *RepositoryProductSql) UpdateOrSave(p *domain.Product) (err error) {
-	panic("unimplemented")
-}
