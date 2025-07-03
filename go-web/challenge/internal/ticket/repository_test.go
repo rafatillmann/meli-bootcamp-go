@@ -46,8 +46,8 @@ func TestGet(t *testing.T) {
 
 		total, err := repository.Get()
 
-		require.Equal(t, total, expectedTickets)
 		require.NoError(t, err)
+		require.Equal(t, total, expectedTickets)
 	})
 }
 
@@ -82,7 +82,7 @@ func TestGetTicketsByDestinationCountry(t *testing.T) {
 
 		total, err := repository.GetTicketsByDestinationCountry("brazil")
 
-		require.Equal(t, total, expectedTickets)
 		require.NoError(t, err)
+		require.Equal(t, total, expectedTickets)
 	})
 }
