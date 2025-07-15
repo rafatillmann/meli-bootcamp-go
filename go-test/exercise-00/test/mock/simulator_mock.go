@@ -14,7 +14,7 @@ func NewCatchSimulatorMock() *CatchSimulatorMock {
 	return &CatchSimulatorMock{}
 }
 
-func (r *CatchSimulatorMock) CanCatch(hunter, prey *simulator.Subject) (canCatch bool) {
-	args := r.Mock.Called()
+func (c *CatchSimulatorMock) CanCatch(hunter, prey *simulator.Subject) (canCatch bool) {
+	args := c.Called(hunter, prey)
 	return args.Bool(0)
 }
