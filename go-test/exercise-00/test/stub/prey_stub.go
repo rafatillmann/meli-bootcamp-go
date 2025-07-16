@@ -5,22 +5,20 @@ import (
 )
 
 type PreyStub struct {
+	speed    float64
+	position *positioner.Position
 }
 
 func NewPreyStub() *PreyStub {
 	return &PreyStub{}
 }
 
-func (t *PreyStub) GetSpeed() (speed float64) {
-	speed = 50.00
+func (p *PreyStub) GetSpeed() (speed float64) {
+	speed = p.speed
 	return
 }
 
-func (t *PreyStub) GetPosition() (position *positioner.Position) {
-	position = &positioner.Position{
-		X: 10,
-		Y: 10,
-		Z: 10,
-	}
+func (p *PreyStub) GetPosition() (position *positioner.Position) {
+	position = p.position
 	return
 }
