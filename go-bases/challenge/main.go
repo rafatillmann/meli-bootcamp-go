@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rafatillmann/meli-bootcamp-go/go-bases/challenge/internal/tickets"
+	"go-bases/challenge/internal/tickets"
 )
 
 func main() {

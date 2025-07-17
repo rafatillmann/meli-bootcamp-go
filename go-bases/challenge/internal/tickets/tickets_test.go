@@ -1,12 +1,12 @@
 package tickets_test
 
 import (
+	"go-bases/challenge/internal/tickets"
 	"io"
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/rafatillmann/meli-bootcamp-go/go-bases/challenge/internal/tickets"
 	"github.com/stretchr/testify/require"
 )
 
