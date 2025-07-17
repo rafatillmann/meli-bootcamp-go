@@ -1,0 +1,23 @@
+mode: set
+testdoubles/hunter/hunter_white_shark.go:12.70,29.2 4 0
+testdoubles/hunter/hunter_white_shark.go:32.113,39.2 2 0
+testdoubles/hunter/hunter_white_shark.go:51.55,65.54 3 0
+testdoubles/hunter/hunter_white_shark.go:65.54,68.3 2 0
+testdoubles/hunter/hunter_white_shark.go:70.2,70.8 1 0
+testdoubles/test/mock/positioner_mock.go:13.42,15.2 1 0
+testdoubles/test/mock/positioner_mock.go:17.100,20.2 2 0
+testdoubles/test/mock/simulator_mock.go:13.50,15.2 1 0
+testdoubles/test/mock/simulator_mock.go:17.88,20.2 2 0
+testdoubles/test/stub/hunter_stub.go:8.34,10.2 1 0
+testdoubles/test/stub/hunter_stub.go:12.55,14.2 1 0
+testdoubles/test/stub/prey_stub.go:12.30,14.2 1 0
+testdoubles/test/stub/prey_stub.go:16.47,19.2 2 0
+testdoubles/test/stub/prey_stub.go:21.66,24.2 2 0
+testdoubles/prey/prey_tuna.go:9.24,24.2 3 0
+testdoubles/prey/prey_tuna.go:27.65,32.2 1 1
+testdoubles/prey/prey_tuna.go:43.43,47.2 2 1
+testdoubles/prey/prey_tuna.go:49.62,52.2 2 1
+testdoubles/positioner/positioner_default.go:6.61,9.2 2 1
+testdoubles/positioner/positioner_default.go:15.92,23.2 5 1
+testdoubles/simulator/simulator_default.go:6.96,11.2 1 1
+testdoubles/simulator/simulator_default.go:22.75,32.2 4 1

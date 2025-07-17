@@ -6,18 +6,13 @@ import (
 	"testdoubles/positioner"
 	"testdoubles/prey"
 	"testdoubles/simulator"
-	"time"
 )
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 
 // CreateWhiteShark creates a new WhiteShark (with default parameters)
 func CreateWhiteShark(simulator simulator.CatchSimulator) (h Hunter) {
 	// default config
 	// -> speed: 144 m/s
-	speed := rand.Float64() * 144.0 + 15.0
+	speed := rand.Float64()*144.0 + 15.0
 	// -> position: random
 	position := &positioner.Position{
 		X: rand.Float64() * 500,
@@ -65,7 +60,7 @@ func (w *WhiteShark) Hunt(prey prey.Prey) (err error) {
 		Position: w.position,
 		Speed:    w.speed,
 	}
-	
+
 	// check if shark can catch the prey
 	if !w.simulator.CanCatch(sharkSubject, preySubject) {
 		err = fmt.Errorf("%w: shark can not catch the prey", ErrCanNotHunt)
