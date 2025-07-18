@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // SaleAttributes is the struct that represents the attributes of a sale.
 type SaleAttributes struct {

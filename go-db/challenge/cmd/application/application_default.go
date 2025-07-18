@@ -1,9 +1,7 @@
 package application
 
 import (
-	"app/internal/handler"
-	"app/internal/repository"
-	"app/internal/service"
+	"app/cmd/router"
 	"database/sql"
 	"net/http"
 
@@ -45,51 +43,32 @@ type ApplicationDefault struct {
 }
 
 func (a *ApplicationDefault) SetUp() (err error) {
-	// - db: init
+
 	a.db, err = sql.Open("mysql", a.cfgDb.FormatDSN())
 	if err != nil {
 		return
 	}
-	// - db: ping
+
 	err = a.db.Ping()
 	if err != nil {
 		return
 	}
-	// - repository
-	rpCustomer := repository.NewCustomersMySQL(a.db)
-	rpProduct := repository.NewProductsMySQL(a.db)
-	rpInvoice := repository.NewInvoicesMySQL(a.db)
-	rpSale := repository.NewSalesMySQL(a.db)
-	// - service
-	svCustomer := service.NewCustomersDefault(rpCustomer)
-	svProduct := service.NewProductsDefault(rpProduct)
-	svInvoice := service.NewInvoicesDefault(rpInvoice)
-	svSale := service.NewSalesDefault(rpSale)
-	// - handler
-	hdCustomer := handler.NewCustomersDefault(svCustomer)
-	hdProduct := handler.NewProductsDefault(svProduct)
-	hdInvoice := handler.NewInvoicesDefault(svInvoice)
-	hdSale := handler.NewSalesDefault(svSale)
 
 	a.router = chi.NewRouter()
 	a.router.Use(middleware.Logger)
 	a.router.Use(middleware.Recoverer)
 
 	a.router.Route("/customers", func(r chi.Router) {
-		r.Get("/", hdCustomer.GetAll())
-		r.Post("/", hdCustomer.Create())
+		r.Mount("/", router.CostumerRouter(a.db))
 	})
 	a.router.Route("/products", func(r chi.Router) {
-		r.Get("/", hdProduct.GetAll())
-		r.Post("/", hdProduct.Create())
+		r.Mount("/", router.ProductRouter(a.db))
 	})
 	a.router.Route("/invoices", func(r chi.Router) {
-		r.Get("/", hdInvoice.GetAll())
-		r.Post("/", hdInvoice.Create())
+		r.Mount("/", router.InvoiceRouter(a.db))
 	})
 	a.router.Route("/sales", func(r chi.Router) {
-		r.Get("/", hdSale.GetAll())
-		r.Post("/", hdSale.Create())
+		r.Mount("/", router.SaleRouter(a.db))
 	})
 
 	return

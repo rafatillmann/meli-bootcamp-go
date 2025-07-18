@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // ServiceProduct is the interface that wraps the basic Product methods.
 type ServiceProduct interface {

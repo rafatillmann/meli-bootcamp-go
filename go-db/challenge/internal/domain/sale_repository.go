@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // RepositorySale is the interface that wraps the basic Sale methods.
 type RepositorySale interface {

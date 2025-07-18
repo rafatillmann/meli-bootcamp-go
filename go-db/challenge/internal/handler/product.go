@@ -1,23 +1,22 @@
 package handler
 
 import (
+	"app/internal/domain"
 	"net/http"
-
-	"app/internal"
 
 	"github.com/bootcamp-go/web/request"
 	"github.com/bootcamp-go/web/response"
 )
 
 // NewProductsDefault returns a new ProductsDefault
-func NewProductsDefault(sv internal.ServiceProduct) *ProductsDefault {
+func NewProductsDefault(sv domain.ServiceProduct) *ProductsDefault {
 	return &ProductsDefault{sv: sv}
 }
 
 // ProductsDefault is a struct that returns the product handlers
 type ProductsDefault struct {
 	// sv is the product's service
-	sv internal.ServiceProduct
+	sv domain.ServiceProduct
 }
 
 // ProductJSON is a struct that represents a product in JSON format
@@ -26,6 +25,7 @@ type ProductJSON struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 }
+
 // GetAll returns all products
 func (h *ProductsDefault) GetAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -61,6 +61,7 @@ type RequestBodyProduct struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 }
+
 // Create creates a new product
 func (h *ProductsDefault) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -75,8 +76,8 @@ func (h *ProductsDefault) Create() http.HandlerFunc {
 
 		// process
 		// - deserialize
-		p := internal.Product{
-			ProductAttributes: internal.ProductAttributes{
+		p := domain.Product{
+			ProductAttributes: domain.ProductAttributes{
 				Description: reqBody.Description,
 				Price:       reqBody.Price,
 			},

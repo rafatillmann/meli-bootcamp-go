@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // ServiceInvoice is the interface that wraps the basic methods that an invoice service should implement.
 type ServiceInvoice interface {

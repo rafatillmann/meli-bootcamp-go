@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // RepositoryCustomer is the interface that wraps the basic methods that a customer repository should implement.
 type RepositoryCustomer interface {

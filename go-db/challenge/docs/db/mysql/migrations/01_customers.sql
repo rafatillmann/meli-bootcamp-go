@@ -1,5 +1,5 @@
 -- Insert data
-INSERT INTO customers (id, last_name, first_name, condition) VALUES
+INSERT INTO customers (id, last_name, first_name, `condition`) VALUES
 (1, 'Fifield', 'Ike', 0),
 (2, 'Cowland', 'Brannon', 1),
 (3, 'Saint', 'Arel', 1),
@@ -28,7 +28,7 @@ INSERT INTO customers (id, last_name, first_name, condition) VALUES
 (26, 'Ollerhad', 'Jaime', 0),
 (27, 'Robak', 'Yank', 1),
 (28, 'Gibbetts', 'Missy', 0),
-(29, 'D''Aubney', 'Kip', 1),
+(29, 'DAubney', 'Kip', 1),
 (30, 'Sandeson', 'Benjamen', 0),
 (31, 'Christophersen', 'Tamma', 0),
 (32, 'Spellacey', 'Cassondra', 0),

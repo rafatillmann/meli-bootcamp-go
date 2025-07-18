@@ -1,29 +1,28 @@
 package handler
 
 import (
+	"app/internal/domain"
 	"net/http"
-
-	"app/internal"
 
 	"github.com/bootcamp-go/web/request"
 	"github.com/bootcamp-go/web/response"
 )
 
 // NewSalesDefault returns a new SalesDefault
-func NewSalesDefault(sv internal.ServiceSale) *SalesDefault {
+func NewSalesDefault(sv domain.ServiceSale) *SalesDefault {
 	return &SalesDefault{sv: sv}
 }
 
 // SalesDefault is a struct that returns the sale handlers
 type SalesDefault struct {
 	// sv is the sale's service
-	sv internal.ServiceSale
+	sv domain.ServiceSale
 }
 
 // SaleJSON is a struct that represents a sale in JSON format
 type SaleJSON struct {
-	Id int `json:"id"`
-	Quantity int `json:"quantity"`
+	Id        int `json:"id"`
+	Quantity  int `json:"quantity"`
 	ProductId int `json:"product_id"`
 	InvoiceId int `json:"invoice_id"`
 }
@@ -47,8 +46,8 @@ func (h *SalesDefault) GetAll() http.HandlerFunc {
 		for ix, v := range s {
 			sJSON[ix] = SaleJSON{
 				Id:        v.Id,
-				Quantity: v.Quantity,
-				ProductId:  v.ProductId,
+				Quantity:  v.Quantity,
+				ProductId: v.ProductId,
 				InvoiceId: v.InvoiceId,
 			}
 		}
@@ -61,10 +60,11 @@ func (h *SalesDefault) GetAll() http.HandlerFunc {
 
 // RequestBodySale is a struct that represents the request body for a sale
 type RequestBodySale struct {
-	Quantity int `json:"quantity"`
+	Quantity  int `json:"quantity"`
 	ProductId int `json:"product_id"`
 	InvoiceId int `json:"invoice_id"`
 }
+
 // Create creates a new sale
 func (h *SalesDefault) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -79,9 +79,9 @@ func (h *SalesDefault) Create() http.HandlerFunc {
 
 		// process
 		// - deserialize
-		s := internal.Sale{
-			SaleAttributes: internal.SaleAttributes{
-				Quantity: reqBody.Quantity,
+		s := domain.Sale{
+			SaleAttributes: domain.SaleAttributes{
+				Quantity:  reqBody.Quantity,
 				ProductId: reqBody.ProductId,
 				InvoiceId: reqBody.InvoiceId,
 			},
@@ -97,8 +97,8 @@ func (h *SalesDefault) Create() http.HandlerFunc {
 		// - serialize
 		sa := SaleJSON{
 			Id:        s.Id,
-			Quantity: s.Quantity,
-			ProductId:  s.ProductId,
+			Quantity:  s.Quantity,
+			ProductId: s.ProductId,
 			InvoiceId: s.InvoiceId,
 		}
 		response.JSON(w, http.StatusOK, map[string]any{

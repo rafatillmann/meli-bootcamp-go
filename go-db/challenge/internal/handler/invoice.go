@@ -1,23 +1,22 @@
 package handler
 
 import (
+	"app/internal/domain"
 	"net/http"
-
-	"app/internal"
 
 	"github.com/bootcamp-go/web/request"
 	"github.com/bootcamp-go/web/response"
 )
 
 // NewInvoicesDefault returns a new InvoicesDefault
-func NewInvoicesDefault(sv internal.ServiceInvoice) *InvoicesDefault {
+func NewInvoicesDefault(sv domain.ServiceInvoice) *InvoicesDefault {
 	return &InvoicesDefault{sv: sv}
 }
 
 // InvoicesDefault is a struct that returns the invoice handlers
 type InvoicesDefault struct {
 	// sv is the invoice's service
-	sv internal.ServiceInvoice
+	sv domain.ServiceInvoice
 }
 
 // InvoiceJSON is a struct that represents a invoice in JSON format
@@ -27,6 +26,7 @@ type InvoiceJSON struct {
 	Total      float64 `json:"total"`
 	CustomerId int     `json:"customer_id"`
 }
+
 // GetAll returns all invoices
 func (h *InvoicesDefault) GetAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -64,6 +64,7 @@ type RequestBodyInvoice struct {
 	Total      float64 `json:"total"`
 	CustomerId int     `json:"customer_id"`
 }
+
 // Create creates a new invoice
 func (h *InvoicesDefault) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -78,8 +79,8 @@ func (h *InvoicesDefault) Create() http.HandlerFunc {
 
 		// process
 		// - deserialize
-		i := internal.Invoice{
-			InvoiceAttributes: internal.InvoiceAttributes{
+		i := domain.Invoice{
+			InvoiceAttributes: domain.InvoiceAttributes{
 				Datetime:   reqBody.Datetime,
 				Total:      reqBody.Total,
 				CustomerId: reqBody.CustomerId,

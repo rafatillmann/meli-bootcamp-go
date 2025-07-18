@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // ServiceSale is the interface that wraps the basic ServiceSale methods.
 type ServiceSale interface {

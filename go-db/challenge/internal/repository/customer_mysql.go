@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"app/internal"
+	"app/internal/domain"
 )
 
 // NewCustomersMySQL creates new mysql repository for customer entity.
@@ -18,7 +18,7 @@ type CustomersMySQL struct {
 }
 
 // FindAll returns all customers from the database.
-func (r *CustomersMySQL) FindAll() (c []internal.Customer, err error) {
+func (r *CustomersMySQL) FindAll() (c []domain.Customer, err error) {
 	// execute the query
 	rows, err := r.db.Query("SELECT `id`, `first_name`, `last_name`, `condition` FROM customers")
 	if err != nil {
@@ -28,7 +28,7 @@ func (r *CustomersMySQL) FindAll() (c []internal.Customer, err error) {
 
 	// iterate over the rows
 	for rows.Next() {
-		var cs internal.Customer
+		var cs domain.Customer
 		// scan the row into the customer
 		err := rows.Scan(&cs.Id, &cs.FirstName, &cs.LastName, &cs.Condition)
 		if err != nil {
@@ -46,7 +46,7 @@ func (r *CustomersMySQL) FindAll() (c []internal.Customer, err error) {
 }
 
 // Save saves the customer into the database.
-func (r *CustomersMySQL) Save(c *internal.Customer) (err error) {
+func (r *CustomersMySQL) Save(c *domain.Customer) (err error) {
 	// execute the query
 	res, err := r.db.Exec(
 		"INSERT INTO customers (`first_name`, `last_name`, `condition`) VALUES (?, ?, ?)",
@@ -64,7 +64,6 @@ func (r *CustomersMySQL) Save(c *internal.Customer) (err error) {
 
 	// set the id
 	(*c).Id = int(id)
-	
+
 	return
 }
-

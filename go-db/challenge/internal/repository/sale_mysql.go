@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"app/internal"
+	"app/internal/domain"
 )
 
 // NewSalesMySQL creates new mysql repository for sale entity.
@@ -18,7 +18,7 @@ type SalesMySQL struct {
 }
 
 // FindAll returns all sales from the database.
-func (r *SalesMySQL) FindAll() (s []internal.Sale, err error) {
+func (r *SalesMySQL) FindAll() (s []domain.Sale, err error) {
 	// execute the query
 	rows, err := r.db.Query("SELECT `id`, `quantity`, `product_id`, `invoice_id` FROM sales")
 	if err != nil {
@@ -28,7 +28,7 @@ func (r *SalesMySQL) FindAll() (s []internal.Sale, err error) {
 
 	// iterate over the rows
 	for rows.Next() {
-		var sa internal.Sale
+		var sa domain.Sale
 		// scan the row into the sale
 		err := rows.Scan(&sa.Id, &sa.Quantity, &sa.ProductId, &sa.InvoiceId)
 		if err != nil {
@@ -46,7 +46,7 @@ func (r *SalesMySQL) FindAll() (s []internal.Sale, err error) {
 }
 
 // Save saves the sale into the database.
-func (r *SalesMySQL) Save(s *internal.Sale) (err error) {
+func (r *SalesMySQL) Save(s *domain.Sale) (err error) {
 	// execute the query
 	res, err := r.db.Exec(
 		"INSERT INTO sales (`quantity`, `product_id`, `invoice_id`) VALUES (?, ?, ?)",

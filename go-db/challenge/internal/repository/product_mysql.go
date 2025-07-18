@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"app/internal"
+	"app/internal/domain"
 )
 
 // NewProductsMySQL creates new mysql repository for product entity.
@@ -18,7 +18,7 @@ type ProductsMySQL struct {
 }
 
 // FindAll returns all products from the database.
-func (r *ProductsMySQL) FindAll() (p []internal.Product, err error) {
+func (r *ProductsMySQL) FindAll() (p []domain.Product, err error) {
 	// execute the query
 	rows, err := r.db.Query("SELECT `id`, `description`, `price` FROM products")
 	if err != nil {
@@ -28,7 +28,7 @@ func (r *ProductsMySQL) FindAll() (p []internal.Product, err error) {
 
 	// iterate over the rows
 	for rows.Next() {
-		var pr internal.Product
+		var pr domain.Product
 		// scan the row into the product
 		err := rows.Scan(&pr.Id, &pr.Description, &pr.Price)
 		if err != nil {
@@ -46,7 +46,7 @@ func (r *ProductsMySQL) FindAll() (p []internal.Product, err error) {
 }
 
 // Save saves the product into the database.
-func (r *ProductsMySQL) Save(p *internal.Product) (err error) {
+func (r *ProductsMySQL) Save(p *domain.Product) (err error) {
 	// execute the query
 	res, err := r.db.Exec(
 		"INSERT INTO products (`description`, `price`) VALUES (?, ?)",

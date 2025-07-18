@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // RepositoryInvoice is the interface that wraps the basic methods that an invoice repository should implement.
 type RepositoryInvoice interface {

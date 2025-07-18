@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"app/internal"
+	"app/internal/domain"
 )
 
 // NewInvoicesMySQL creates new mysql repository for invoice entity.
@@ -18,7 +18,7 @@ type InvoicesMySQL struct {
 }
 
 // FindAll returns all invoices from the database.
-func (r *InvoicesMySQL) FindAll() (i []internal.Invoice, err error) {
+func (r *InvoicesMySQL) FindAll() (i []domain.Invoice, err error) {
 	// execute the query
 	rows, err := r.db.Query("SELECT `id`, `datetime`, `total`, `customer_id` FROM invoices")
 	if err != nil {
@@ -28,7 +28,7 @@ func (r *InvoicesMySQL) FindAll() (i []internal.Invoice, err error) {
 
 	// iterate over the rows
 	for rows.Next() {
-		var iv internal.Invoice
+		var iv domain.Invoice
 		// scan the row into the invoice
 		err := rows.Scan(&iv.Id, &iv.Datetime, &iv.Total, &iv.CustomerId)
 		if err != nil {
@@ -46,7 +46,7 @@ func (r *InvoicesMySQL) FindAll() (i []internal.Invoice, err error) {
 }
 
 // Save saves the invoice into the database.
-func (r *InvoicesMySQL) Save(i *internal.Invoice) (err error) {
+func (r *InvoicesMySQL) Save(i *domain.Invoice) (err error) {
 	// execute the query
 	res, err := r.db.Exec(
 		"INSERT INTO invoices (`datetime`, `total`, `customer_id`) VALUES (?, ?, ?)",

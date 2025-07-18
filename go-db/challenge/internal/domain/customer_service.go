@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // ServiceCustomer is the interface that wraps the basic methods that a customer service should implement.
 type ServiceCustomer interface {

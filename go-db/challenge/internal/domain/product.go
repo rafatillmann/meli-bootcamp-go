@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // ProductAttributes is the struct that represents the attributes of a product.
 type ProductAttributes struct {

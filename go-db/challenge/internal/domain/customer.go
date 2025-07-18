@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // CustomerAttributes is the struct that represents the attributes of a customer.
 type CustomerAttributes struct {

@@ -1,4 +1,4 @@
-package internal
+package domain
 
 // InvoiceAttributes is the struct that represents the attributes of an invoice.
 type InvoiceAttributes struct {

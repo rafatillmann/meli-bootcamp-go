@@ -1,24 +1,23 @@
 package handler
 
 import (
+	"app/internal/domain"
 	"log"
 	"net/http"
-
-	"app/internal"
 
 	"github.com/bootcamp-go/web/request"
 	"github.com/bootcamp-go/web/response"
 )
 
 // NewCustomersDefault returns a new CustomersDefault
-func NewCustomersDefault(sv internal.ServiceCustomer) *CustomersDefault {
+func NewCustomersDefault(sv domain.ServiceCustomer) *CustomersDefault {
 	return &CustomersDefault{sv: sv}
 }
 
 // CustomersDefault is a struct that returns the customer handlers
 type CustomersDefault struct {
 	// sv is the customer's service
-	sv internal.ServiceCustomer
+	sv domain.ServiceCustomer
 }
 
 // CustomerJSON is a struct that represents a customer in JSON format
@@ -28,6 +27,7 @@ type CustomerJSON struct {
 	LastName  string `json:"last_name"`
 	Condition int    `json:"condition"`
 }
+
 // GetAll returns all customers
 func (h *CustomersDefault) GetAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -66,6 +66,7 @@ type RequestBodyCustomer struct {
 	LastName  string `json:"last_name"`
 	Condition int    `json:"condition"`
 }
+
 // Create creates a new customer
 func (h *CustomersDefault) Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -80,8 +81,8 @@ func (h *CustomersDefault) Create() http.HandlerFunc {
 
 		// process
 		// - deserialize
-		c := internal.Customer{
-			CustomerAttributes: internal.CustomerAttributes{
+		c := domain.Customer{
+			CustomerAttributes: domain.CustomerAttributes{
 				FirstName: reqBody.FirstName,
 				LastName:  reqBody.LastName,
 				Condition: reqBody.Condition,
