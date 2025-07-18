@@ -15,6 +15,6 @@ func NewPositionerMock() *PositionerMock {
 }
 
 func (p *PositionerMock) GetLinearDistance(from, to *positioner.Position) (linearDistance float64) {
-	args := p.Called()
+	args := p.Called(from, to)
 	return args.Get(0).(float64)
 }

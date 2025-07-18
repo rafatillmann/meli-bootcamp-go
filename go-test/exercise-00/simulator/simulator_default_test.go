@@ -13,15 +13,23 @@ func TestCanCatch(t *testing.T) {
 	t.Run("can catch", func(t *testing.T) {
 		mockPositioner := mock.NewPositionerMock()
 		hunter := &simulator.Subject{
-			Position: &positioner.Position{},
-			Speed:    20,
+			Position: &positioner.Position{
+				X: 10,
+				Y: 10,
+				Z: 10,
+			},
+			Speed: 20,
 		}
 		prey := &simulator.Subject{
-			Position: &positioner.Position{},
-			Speed:    10,
+			Position: &positioner.Position{
+				X: 10,
+				Y: 10,
+				Z: 10,
+			},
+			Speed: 10,
 		}
 		simulator := simulator.NewCatchSimulatorDefault(10.00, mockPositioner)
-		mockPositioner.On("GetLinearDistance").Return(10.00)
+		mockPositioner.On("GetLinearDistance", hunter.Position, prey.Position).Return(10.00)
 
 		canCatch := simulator.CanCatch(hunter, prey)
 
@@ -30,15 +38,23 @@ func TestCanCatch(t *testing.T) {
 	t.Run("can not catch, too slow", func(t *testing.T) {
 		mockPositioner := mock.NewPositionerMock()
 		hunter := &simulator.Subject{
-			Position: &positioner.Position{},
-			Speed:    10,
+			Position: &positioner.Position{
+				X: 10,
+				Y: 10,
+				Z: 10,
+			},
+			Speed: 10,
 		}
 		prey := &simulator.Subject{
-			Position: &positioner.Position{},
-			Speed:    20,
+			Position: &positioner.Position{
+				X: 10,
+				Y: 10,
+				Z: 10,
+			},
+			Speed: 20,
 		}
 		simulator := simulator.NewCatchSimulatorDefault(10.00, mockPositioner)
-		mockPositioner.On("GetLinearDistance").Return(10.00)
+		mockPositioner.On("GetLinearDistance", hunter.Position, prey.Position).Return(10.00)
 
 		canCatch := simulator.CanCatch(hunter, prey)
 
@@ -48,15 +64,23 @@ func TestCanCatch(t *testing.T) {
 	t.Run("can not catch, not enought time", func(t *testing.T) {
 		mockPositioner := mock.NewPositionerMock()
 		hunter := &simulator.Subject{
-			Position: &positioner.Position{},
-			Speed:    20,
+			Position: &positioner.Position{
+				X: 10,
+				Y: 10,
+				Z: 10,
+			},
+			Speed: 20,
 		}
 		prey := &simulator.Subject{
-			Position: &positioner.Position{},
-			Speed:    10,
+			Position: &positioner.Position{
+				X: 10,
+				Y: 10,
+				Z: 10,
+			},
+			Speed: 10,
 		}
 		simulator := simulator.NewCatchSimulatorDefault(10.00, mockPositioner)
-		mockPositioner.On("GetLinearDistance").Return(1000.00)
+		mockPositioner.On("GetLinearDistance", hunter.Position, prey.Position).Return(1000.00)
 
 		canCatch := simulator.CanCatch(hunter, prey)
 
