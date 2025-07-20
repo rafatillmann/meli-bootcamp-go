@@ -18,5 +18,6 @@ func InvoiceRouter(db *sql.DB) http.Handler {
 
 	r.Get("/", handler.GetAll())
 	r.Post("/", handler.Create())
+	r.Post("/recalculate-total/{invoiceId}", handler.RecalcuteTotal())
 	return r
 }

@@ -8,6 +8,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate/v4"
+	migrate_mysql "github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 type ConfigApplicationDefault struct {
@@ -52,6 +55,22 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	err = a.db.Ping()
 	if err != nil {
 		return
+	}
+
+	driver, err := migrate_mysql.WithInstance(a.db, &migrate_mysql.Config{})
+	if err != nil {
+		return err
+	}
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://./docs/db/mysql/migrations",
+		"mysql",
+		driver,
+	)
+	if err != nil {
+		return err
+	}
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return err
 	}
 
 	a.router = chi.NewRouter()

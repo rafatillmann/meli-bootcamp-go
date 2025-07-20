@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 
+	"app/internal/apperrors"
 	"app/internal/domain"
 )
 
@@ -11,30 +12,23 @@ func NewInvoicesMySQL(db *sql.DB) *InvoicesMySQL {
 	return &InvoicesMySQL{db}
 }
 
-// InvoicesMySQL is the MySQL repository implementation for invoice entity.
 type InvoicesMySQL struct {
-	// db is the database connection.
 	db *sql.DB
 }
 
-// FindAll returns all invoices from the database.
 func (r *InvoicesMySQL) FindAll() (i []domain.Invoice, err error) {
-	// execute the query
 	rows, err := r.db.Query("SELECT `id`, `datetime`, `total`, `customer_id` FROM invoices")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	// iterate over the rows
 	for rows.Next() {
 		var iv domain.Invoice
-		// scan the row into the invoice
 		err := rows.Scan(&iv.Id, &iv.Datetime, &iv.Total, &iv.CustomerId)
 		if err != nil {
 			return nil, err
 		}
-		// append the invoice to the slice
 		i = append(i, iv)
 	}
 	err = rows.Err()
@@ -45,9 +39,7 @@ func (r *InvoicesMySQL) FindAll() (i []domain.Invoice, err error) {
 	return
 }
 
-// Save saves the invoice into the database.
 func (r *InvoicesMySQL) Save(i *domain.Invoice) (err error) {
-	// execute the query
 	res, err := r.db.Exec(
 		"INSERT INTO invoices (`datetime`, `total`, `customer_id`) VALUES (?, ?, ?)",
 		(*i).Datetime, (*i).Total, (*i).CustomerId,
@@ -56,14 +48,26 @@ func (r *InvoicesMySQL) Save(i *domain.Invoice) (err error) {
 		return err
 	}
 
-	// get the last inserted id
 	id, err := res.LastInsertId()
 	if err != nil {
 		return err
 	}
 
-	// set the id
 	(*i).Id = int(id)
 
+	return
+}
+
+func (r *InvoicesMySQL) RecalculateTotal(invoiceId int) (err error) {
+	updateStmt := "UPDATE invoices i SET total = (SELECT SUM(p.price * s.quantity) FROM products p JOIN sales s ON p.id = s.product_id WHERE s.invoice_id = ?) WHERE i.id = ?;"
+	result, err := r.db.Exec(updateStmt, invoiceId, invoiceId)
+	if err != nil {
+		err = apperrors.ErrDatabase
+		return
+	}
+	if _, err = result.RowsAffected(); err != nil {
+		err = apperrors.ErrDatabase
+		return
+	}
 	return
 }

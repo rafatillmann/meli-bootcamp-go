@@ -24,3 +24,8 @@ func (s *InvoicesDefault) Save(i *domain.Invoice) (err error) {
 	err = s.rp.Save(i)
 	return
 }
+
+func (s *InvoicesDefault) RecalculateTotal(invoiceId int) (err error) {
+	err = s.rp.RecalculateTotal(invoiceId)
+	return
+}

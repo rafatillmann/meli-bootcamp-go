@@ -3,9 +3,11 @@ package handler
 import (
 	"app/internal/domain"
 	"net/http"
+	"strconv"
 
 	"github.com/bootcamp-go/web/request"
 	"github.com/bootcamp-go/web/response"
+	"github.com/go-chi/chi/v5"
 )
 
 // NewInvoicesDefault returns a new InvoicesDefault
@@ -104,6 +106,25 @@ func (h *InvoicesDefault) Create() http.HandlerFunc {
 		response.JSON(w, http.StatusOK, map[string]any{
 			"message": "invoice created",
 			"data":    iv,
+		})
+	}
+}
+
+func (h *InvoicesDefault) RecalcuteTotal() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		invoiceId, err := strconv.Atoi(chi.URLParam(r, "invoiceId"))
+		if err != nil {
+			response.Error(w, http.StatusBadRequest, "invoice ID must be an integer")
+			return
+		}
+
+		err = h.sv.RecalculateTotal(invoiceId)
+		if err != nil {
+			response.Error(w, http.StatusInternalServerError, "unable to recalculate total")
+			return
+		}
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "invoice total recalculated",
 		})
 	}
 }
