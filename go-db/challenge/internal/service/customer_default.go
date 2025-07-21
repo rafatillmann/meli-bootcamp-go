@@ -13,6 +13,16 @@ type CustomersDefault struct {
 	rp domain.RepositoryCustomer
 }
 
+// Amount implements domain.ServiceCustomer.
+func (s *CustomersDefault) Amount() ([]domain.CustomerAmount, error) {
+	return s.rp.Amount()
+}
+
+// TotalByCondition implements domain.ServiceCustomer.
+func (s *CustomersDefault) TotalByCondition() ([]domain.CustomerCondition, error) {
+	return s.rp.TotalByCondition()
+}
+
 // FindAll returns all customers.
 func (s *CustomersDefault) FindAll() (c []domain.Customer, err error) {
 	c, err = s.rp.FindAll()

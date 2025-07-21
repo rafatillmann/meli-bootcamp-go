@@ -13,6 +13,11 @@ type ProductsDefault struct {
 	rp domain.RepositoryProduct
 }
 
+// BestSellers implements domain.ServiceProduct.
+func (s *ProductsDefault) BestSellers() ([]domain.ProductBestSeller, error) {
+	return s.rp.BestSellers()
+}
+
 // FindAll returns all products.
 func (s *ProductsDefault) FindAll() (p []domain.Product, err error) {
 	p, err = s.rp.FindAll()

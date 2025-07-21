@@ -11,5 +11,18 @@ services:
         volumes:
             - data:/var/lib/mysql
             - ./docs/db/mysql/database.sql:/docker-entrypoint-initdb.d/init.sql
+    db-test:
+        image: mysql:8.2
+        container_name: mysql-products
+        restart: always
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: products
+        ports:
+            - "3307:3306"
+        volumes:
+            - data-test:/var/lib/mysql
+            - ./docs/db/mysql/database.sql:/docker-entrypoint-initdb.d/init.sql
 volumes:
     data:
+    data-test:

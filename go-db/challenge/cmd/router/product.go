@@ -18,5 +18,6 @@ func ProductRouter(db *sql.DB) http.Handler {
 
 	r.Get("/", handler.GetAll())
 	r.Post("/", handler.Create())
+	r.Get("/best-sellers", handler.BestSellers())
 	return r
 }

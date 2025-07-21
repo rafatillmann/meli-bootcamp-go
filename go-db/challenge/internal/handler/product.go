@@ -102,3 +102,18 @@ func (h *ProductsDefault) Create() http.HandlerFunc {
 		})
 	}
 }
+
+func (h *ProductsDefault) BestSellers() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		result, err := h.sv.BestSellers()
+		if err != nil {
+			response.Error(w, http.StatusInternalServerError, "error getting total by customer condition")
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "best sellers",
+			"data":    result,
+		})
+	}
+}

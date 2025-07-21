@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 
+	"app/internal/apperrors"
 	"app/internal/domain"
 )
 
@@ -11,30 +12,23 @@ func NewCustomersMySQL(db *sql.DB) *CustomersMySQL {
 	return &CustomersMySQL{db}
 }
 
-// CustomersMySQL is the MySQL repository implementation for customer entity.
 type CustomersMySQL struct {
-	// db is the database connection.
 	db *sql.DB
 }
 
-// FindAll returns all customers from the database.
 func (r *CustomersMySQL) FindAll() (c []domain.Customer, err error) {
-	// execute the query
 	rows, err := r.db.Query("SELECT `id`, `first_name`, `last_name`, `condition` FROM customers")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	// iterate over the rows
 	for rows.Next() {
 		var cs domain.Customer
-		// scan the row into the customer
 		err := rows.Scan(&cs.Id, &cs.FirstName, &cs.LastName, &cs.Condition)
 		if err != nil {
 			return nil, err
 		}
-		// append the customer to the slice
 		c = append(c, cs)
 	}
 	err = rows.Err()
@@ -45,9 +39,7 @@ func (r *CustomersMySQL) FindAll() (c []domain.Customer, err error) {
 	return
 }
 
-// Save saves the customer into the database.
 func (r *CustomersMySQL) Save(c *domain.Customer) (err error) {
-	// execute the query
 	res, err := r.db.Exec(
 		"INSERT INTO customers (`first_name`, `last_name`, `condition`) VALUES (?, ?, ?)",
 		(*c).FirstName, (*c).LastName, (*c).Condition,
@@ -56,14 +48,77 @@ func (r *CustomersMySQL) Save(c *domain.Customer) (err error) {
 		return err
 	}
 
-	// get the last inserted id
 	id, err := res.LastInsertId()
 	if err != nil {
 		return err
 	}
 
-	// set the id
 	(*c).Id = int(id)
 
 	return
+}
+
+func (r *CustomersMySQL) TotalByCondition() ([]domain.CustomerCondition, error) {
+	rows, err := r.db.Query(`SELECT c.condition, TRUNCATE(SUM(i.total), 2) AS total from customers c 
+                            JOIN invoices i
+                            ON i.customer_id = c.id
+                            GROUP BY c.condition`)
+
+	if err != nil {
+		return nil, apperrors.ErrDatabase
+	}
+	defer rows.Close()
+
+	if err := rows.Err(); err != nil {
+		return nil, apperrors.ErrDatabase
+	}
+
+	var result []domain.CustomerCondition
+	for rows.Next() {
+		var customerCondition domain.CustomerCondition
+
+		if err := rows.Scan(
+			&customerCondition.Condition,
+			&customerCondition.Total,
+		); err != nil {
+			return nil, apperrors.ErrDatabase
+		}
+		result = append(result, customerCondition)
+	}
+
+	return result, nil
+}
+
+func (r *CustomersMySQL) Amount() ([]domain.CustomerAmount, error) {
+	rows, err := r.db.Query(`SELECT c.first_name, c.last_name, TRUNCATE(SUM(i.total), 2) as amount from customers c
+                            JOIN invoices i
+                            ON i.customer_id = c.id
+                            GROUP BY c.first_name, c.last_name
+                            ORDER BY amount desc
+                            LIMIT 5`)
+
+	if err != nil {
+		return nil, apperrors.ErrDatabase
+	}
+	defer rows.Close()
+
+	if err := rows.Err(); err != nil {
+		return nil, apperrors.ErrDatabase
+	}
+
+	var result []domain.CustomerAmount
+	for rows.Next() {
+		var customerAmount domain.CustomerAmount
+
+		if err := rows.Scan(
+			&customerAmount.FirstName,
+			&customerAmount.LastName,
+			&customerAmount.Amount,
+		); err != nil {
+			return nil, apperrors.ErrDatabase
+		}
+		result = append(result, customerAmount)
+	}
+
+	return result, nil
 }

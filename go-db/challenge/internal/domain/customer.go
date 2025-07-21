@@ -17,3 +17,14 @@ type Customer struct {
 	// CustomerAttributes is the attributes of the customer.
 	CustomerAttributes
 }
+
+type CustomerCondition struct {
+	Condition int     `json:"condition"`
+	Total     float64 `json:"total"`
+}
+
+type CustomerAmount struct {
+	FirstName string  `json:"first_name"`
+	LastName  string  `json:"last_name"`
+	Amount    float64 `json:"amount"`
+}

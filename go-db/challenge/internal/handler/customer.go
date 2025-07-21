@@ -109,3 +109,33 @@ func (h *CustomersDefault) Create() http.HandlerFunc {
 		})
 	}
 }
+
+func (h *CustomersDefault) TotalByCondition() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		result, err := h.sv.TotalByCondition()
+		if err != nil {
+			response.Error(w, http.StatusInternalServerError, "error getting total by customer condition")
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "total by customer condition",
+			"data":    result,
+		})
+	}
+}
+
+func (h *CustomersDefault) Amount() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		result, err := h.sv.Amount()
+		if err != nil {
+			response.Error(w, http.StatusInternalServerError, "error getting total by customer condition")
+			return
+		}
+
+		response.JSON(w, http.StatusOK, map[string]any{
+			"message": "top five customers",
+			"data":    result,
+		})
+	}
+}

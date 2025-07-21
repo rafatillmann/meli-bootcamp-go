@@ -15,3 +15,8 @@ type Product struct {
 	// ProductAttributes is the attributes of the product.
 	ProductAttributes
 }
+
+type ProductBestSeller struct {
+	Description string `json:"description"`
+	Total       int    `json:"total"`
+}

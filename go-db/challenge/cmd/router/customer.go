@@ -10,7 +10,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func CostumerRouter(db *sql.DB) http.Handler {
+func CustomerRouter(db *sql.DB) http.Handler {
 	r := chi.NewRouter()
 	repository := repository.NewCustomersMySQL(db)
 	service := service.NewCustomersDefault(repository)
@@ -18,5 +18,7 @@ func CostumerRouter(db *sql.DB) http.Handler {
 
 	r.Get("/", handler.GetAll())
 	r.Post("/", handler.Create())
+	r.Get("/total-condition", handler.TotalByCondition())
+	r.Get("/amount", handler.Amount())
 	return r
 }

@@ -78,7 +78,7 @@ func (a *ApplicationDefault) SetUp() (err error) {
 	a.router.Use(middleware.Recoverer)
 
 	a.router.Route("/customers", func(r chi.Router) {
-		r.Mount("/", router.CostumerRouter(a.db))
+		r.Mount("/", router.CustomerRouter(a.db))
 	})
 	a.router.Route("/products", func(r chi.Router) {
 		r.Mount("/", router.ProductRouter(a.db))
