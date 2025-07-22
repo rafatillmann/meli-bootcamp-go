@@ -13,7 +13,7 @@ services:
             - ./docs/db/mysql/database.sql:/docker-entrypoint-initdb.d/init.sql
     db-test:
         image: mysql:8.2
-        container_name: mysql-products
+        container_name: mysql-products-test
         restart: always
         environment:
           MYSQL_ROOT_PASSWORD: root
