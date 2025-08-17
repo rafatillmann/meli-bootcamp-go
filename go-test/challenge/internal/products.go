@@ -1,16 +1,16 @@
 package internal
 
 type ProductAttributes struct {
-	Description	string
-	Price    	float64
-	SellerId 	int
+	Description string
+	Price       float64
+	SellerId    int
 }
 
 type Product struct {
-	Id       	int
+	ID int
 	ProductAttributes
 }
 
 type ProductQuery struct {
-	Id	   	int
+	ID int
 }

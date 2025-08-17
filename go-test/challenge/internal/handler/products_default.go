@@ -18,7 +18,7 @@ type ProductsDefault struct {
 }
 
 type ProductJSON struct {
-	Id          int     `json:"id"`
+	ID          int     `json:"id"`
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 	SellerId    int     `json:"seller_id"`
@@ -29,7 +29,7 @@ func (h *ProductsDefault) Get() http.HandlerFunc {
 		var query internal.ProductQuery
 		if r.URL.Query().Has("id") {
 			var err error
-			query.Id, err = strconv.Atoi(r.URL.Query().Get("id"))
+			query.ID, err = strconv.Atoi(r.URL.Query().Get("id"))
 			if err != nil {
 				response.Error(w, http.StatusBadRequest, "invalid id")
 				return
@@ -45,7 +45,7 @@ func (h *ProductsDefault) Get() http.HandlerFunc {
 		data := make(map[int]ProductJSON)
 		for k, v := range p {
 			data[k] = ProductJSON{
-				Id:          v.Id,
+				ID:          v.ID,
 				Description: v.Description,
 				Price:       v.Price,
 				SellerId:    v.SellerId,

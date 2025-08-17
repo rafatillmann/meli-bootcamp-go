@@ -21,7 +21,7 @@ func (r *ProductsMap) SearchProducts(query internal.ProductQuery) (p map[int]int
 	p = make(map[int]internal.Product)
 
 	for k, v := range r.db {
-		if query.Id > 0 && query.Id != v.Id {
+		if query.ID > 0 && query.ID != v.ID {
 			continue
 		}
 
